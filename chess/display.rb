@@ -1,7 +1,4 @@
-require 'colorize'
-require_relative 'board'
-require 'byebug'
-require_relative 'cursor'
+require_relative 'manifesto'
 
 class Display
 

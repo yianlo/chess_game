@@ -1,4 +1,4 @@
-require_relative 'piece'
+# require_relative 'piece'
 
 class Board
 
@@ -13,7 +13,7 @@ class Board
   def populate
     @grid.each_with_index do |row, i|
       row.each_index do |j|
-        self[[i, j]] = Piece.new
+        self[[i, j]] = Pawn.new(:black, self, [i, j])
       end
     end
   end
@@ -31,6 +31,7 @@ class Board
 
 
   def move(start, end_pos)
+    #piece.update_pos(end_pos)
     raise "No pieces here" if self[start].name == null
     raise "You can't move here" unless valid_move? #TODO write out valid_move? method
     raise "You can't move here" if self[end_pos].value != null && self[start].color == self[end_pos].color

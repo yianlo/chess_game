@@ -1,6 +1,6 @@
-require "io/console"
-require 'byebug'
-require_relative 'board'
+# require "io/console"
+# require 'byebug'
+# require_relative 'board'
 
 module Cursorable
   KEYMAP = {
