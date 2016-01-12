@@ -1,5 +1,3 @@
-# require_relative 'piece'
-
 class Board
   WHITE_POSITIONS = {
     pawns: [[6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]],

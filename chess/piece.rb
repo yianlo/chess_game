@@ -1,6 +1,3 @@
-# require_relative 'move_modules'
-
-
 class Piece
   attr_reader :name, :color, :board
 
@@ -12,7 +9,7 @@ class Piece
   end
 
   def to_s
-    "       "
+    "     "
   end
 
   # def avail_moves_array(pos)
@@ -25,19 +22,23 @@ class Piece
   end
 
   def uncross_piece?(pos)
-    return false if @board[pos].color == @color
+    !(@board[pos].color == @color)
   end
 
   def update_position(end_pos)
     @pos = end_pos
   end
 
+  def inspect
+    [@name, @color, @pos].inspect
+  end
 
 
 end
 
 
 class SlidingPieces < Piece
+  MOVEMENTS = []
   # def initialize(color = nil, board, initial_pos)
   #   super(name, color)
   # end
@@ -59,6 +60,8 @@ class SlidingPieces < Piece
 end
 
 class SteppingPieces < Piece
+  MOVEMENTS = []
+
   def potential_moves(pos)
     potential_moves = []
 
@@ -85,8 +88,8 @@ class Queen < SlidingPieces
 
   def to_s
     case @color
-    when :white then "   \u2655   "
-    when :black then "   \u265B   "
+    when :white then "  \u2655  "
+    when :black then "  \u265B  "
     end
   end
 
@@ -104,8 +107,8 @@ class Bishop < SlidingPieces
 
   def to_s
     case @color
-    when :white then "   \u2657   "
-    when :black then "   \u265D   "
+    when :white then "  \u2657  "
+    when :black then "  \u265D  "
     end
   end
 end
@@ -122,8 +125,8 @@ class Rook < SlidingPieces
 
   def to_s
     case @color
-    when :white then "   \u2656   "
-    when :black then "   \u265C   "
+    when :white then "  \u2656  "
+    when :black then "  \u265C  "
     end
   end
 
@@ -150,10 +153,11 @@ class Knight < SteppingPieces
 
   def to_s
     case @color
-    when :white then "   \u2658   "
-    when :black then "   \u265E   "
+    when :white then "  \u2658  "
+    when :black then "  \u265E  "
     end
   end
+
 end
 
 class King < SteppingPieces
@@ -177,8 +181,8 @@ class King < SteppingPieces
 
   def to_s
     case @color
-    when :white then "   \u2654   "
-    when :black then "   \u265A   "
+    when :white then "  \u2654  "
+    when :black then "  \u265A  "
     end
   end
 end
@@ -209,8 +213,8 @@ class Pawn < Piece
 
   def to_s
     case @color
-    when :white then "   \u2659   "
-    when :black then "   \u265F   "
+    when :white then "  \u2659  "
+    when :black then "  \u265F  "
     end
   end
 
@@ -218,5 +222,8 @@ class Pawn < Piece
     # TODO: finish pawn potential moves
 
   end
+
+
+
 
 end

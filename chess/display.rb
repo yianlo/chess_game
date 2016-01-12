@@ -4,6 +4,8 @@ class Display
 
   include Cursorable
 
+  attr_reader :board
+
   def initialize
     @board = Board.new
     @cursor_pos = [0,0]
@@ -34,9 +36,5 @@ class Display
     end
 
   end
-
-
-
-
 
 end
