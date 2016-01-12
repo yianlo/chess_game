@@ -194,23 +194,23 @@ class Pawn < Piece
   ## first move of each pawn can be row +2
   ## when eating another piece pawn can move row +1 && col +1
   ## regular move
-
-  MOVEMENTS = [
-    [1, 0],
-    [2, 0], # only for first move
-    [1, 1], # pawn eating move
-    [1, -1], # pawn eating move
-    [-1, 0],
-    [-2, 0], # only for first move
-    [-1, 1], # pawn eating move
-    [-1,-1] # pawn eating move
-  ]
-
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :pawn
+
+    @initial_pos = initial_pos
+    @movement = [
+      [1, 0],
+      [-1, 0],
+      [-2, 0], # only for first move
+      [2, 0], # only for first move
+      [1, 1], # pawn eating move
+      [1, -1], # pawn eating move
+      [-1, 1], # pawn eating move
+      [-1,-1] # pawn eating move
+    ]
   end
 
   def to_s
@@ -221,8 +221,22 @@ class Pawn < Piece
   end
 
   def potential_moves(pos)
-    # TODO: finish pawn potential moves
+    potential_moves = []
 
+    if pos == @initial_pos
+      @movement.first(4).each do |m|
+        new_pos = [pos[0] + m[0], pos[1] + m[1]]
+        potential_moves << new_pos if valid_move?(new_pos)
+      end
+    else
+      @movement.first(2).each do |m|
+        new_pos = [pos[0] + m[0], pos[1] + m[1]]
+        potential_moves << new_pos if valid_move?(new_pos)
+      end
+    end
+
+    # TODO add the pawn eating moves to the potential moves
+    potential_moves
   end
 
 
