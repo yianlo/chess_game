@@ -24,13 +24,15 @@ class Display
   end
 
   def colorize(piece, i1, i2)
+    # debugger
     if [i1, i2] == @cursor_pos
       piece.to_s.colorize(piece.color).on_red
     elsif (i1 + i2).even?
-      piece.to_s.colorize(piece.color).on_white
+      piece.to_s.colorize(piece.color).on_yellow
     else
       piece.to_s.colorize(piece.color).on_light_black
     end
+
   end
 
 
