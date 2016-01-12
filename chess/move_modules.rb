@@ -1,52 +1,34 @@
-module DiagonalMove
-# for the bishop and the queen
-  MOVEMENTS = [
-    [-1, -1],
-    [-1, 1],
-    [1, -1],
-    [1, 1]
-  ]
-end
-  # def potential_moves(pos)
-  #   potential_moves = []
-  #   (1..7).each do |i|
-  #     new_row = pos[0] + i
-  #     new_col = pos[1] + i
-  #
-  #     potential_moves << [new_row, new_col]
-  #   end
-  #
-  #   potential_moves
+module SlidingPieces
+  # def initialize(color = nil, board, initial_pos)
+  #   super(name, color)
   # end
+  def potential_moves(pos)
+    potential_moves = []
 
-module PerpendicularMove
-  # for the rook and the queen
-  MOVEMENTS = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1]
-  ]
+    @movements.each do |m|
+      new_pos = pos
+      ennemies_crossed_counter = 0
+      while valid_move?(new_pos)
+        ennemies_crossed_counter += 1 if cross_ennemies?(new_pos)
+        potential_moves << new_pos if ennemies_crossed_counter < 2
+
+        new_pos = [new_pos[0] + m[0], new_pos[1] + m[1]]
+      end
+    end
+
+    potential_moves.reject{|m| m == pos}
+  end
 end
 
-  # def potential_moves(pos) #pos = [row, col]
-  #   potential_moves = []
-  #
-  #   (1..7).each do |move|
-  #     new_row = pos[0] + move
-  #     potential_moves << [new_row, pos[1]]
-  #
-  #     new_row = pos[0] - move
-  #     potential_moves << [new_row, pos[1]]
-  #   end
-  #
-  #   (1..7).each do |move|
-  #     new_col = pos[1] + move
-  #     potential_moves << [pos[0], new_col]
-  #
-  #     new_col = pos[1] - move
-  #     potential_moves << [pos[0], new_col]
-  #   end
-  #
-  #   potential_moves
-  # end
+module SteppingPieces
+  def potential_moves(pos)
+    potential_moves = []
+
+    @movements.each do |m|
+      new_pos = [pos[0] + m[0], pos[1] + m[1]]
+      potential_moves << new_pos if valid_move?(new_pos)
+    end
+
+    potential_moves
+  end
+end

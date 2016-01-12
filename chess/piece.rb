@@ -16,13 +16,17 @@ class Piece
   #   pot_moves = potential_moves(pos)
   #   pot_moves.select{ |move| within_bounds?(move) && uncross_piece?(move) }
   # end
-
-  def within_bounds?(pos) #TODO rethink name
-    pos.all?{ |i| i.between?(0, 7) }
+  def valid_move?(pos)
+    #within bounds && does not cross an ally/ piece of same color
+    pos.all?{ |i| i.between?(0, 7) } && @board[pos].color != @color
   end
 
-  def uncross_piece?(pos)
-    !(@board[pos].color == @color)
+  def cross_ennemies?(pos)
+    if @color == :black
+      @board[pos].color == :white
+    elsif @color == :white
+      @board[pos].color == :black
+    end
   end
 
   def update_position(end_pos)
@@ -36,54 +40,24 @@ class Piece
 
 end
 
-
-class SlidingPieces < Piece
-  MOVEMENTS = []
-  # def initialize(color = nil, board, initial_pos)
-  #   super(name, color)
-  # end
-
-  def potential_moves(pos)
-    potential_moves = []
-
-    MOVEMENTS.each do |m|
-      new_pos = pos
-      while within_bounds?(new_pos) && uncross_piece?(new_pos)
-        potential_moves << new_pos
-
-        new_pos = [new_pos[0] + m[0], new_pos[1] + m[1]]
-      end
-    end
-
-    potential_moves.reject{|m| m == pos}
-  end
-end
-
-class SteppingPieces < Piece
-  MOVEMENTS = []
-
-  def potential_moves(pos)
-    potential_moves = []
-
-    MOVEMENTS.each do |m|
-      new_pos = [pos[0] + m[0], pos[1] + m[1]]
-      potential_moves << new_pos if within_bounds?(new_pos) && uncross_piece?(new_pos)
-    end
-
-    potential_moves
-  end
-end
-
-
-class Queen < SlidingPieces
-  include DiagonalMove
-  include PerpendicularMove
+class Queen < Piece
+  include SlidingPieces
 
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :queen
+    @movements = [
+      [-1, -1],
+      [-1, 1],
+      [1, -1],
+      [1, 1],
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1]
+      ]
   end
 
   def to_s
@@ -95,14 +69,19 @@ class Queen < SlidingPieces
 
 end
 
-class Bishop < SlidingPieces
-  include DiagonalMove
+class Bishop < Piece
+  include SlidingPieces
 
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :bishop
+    @movements = [
+      [-1, -1],
+      [-1, 1],
+      [1, -1],
+      [1, 1]]
   end
 
   def to_s
@@ -113,14 +92,20 @@ class Bishop < SlidingPieces
   end
 end
 
-class Rook < SlidingPieces
-  include PerpendicularMove
+class Rook < Piece
+  include SlidingPieces
 
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :rook
+    @movements = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1]
+    ]
   end
 
   def to_s
@@ -132,23 +117,36 @@ class Rook < SlidingPieces
 
 end
 
-class Knight < SteppingPieces
-  MOVEMENTS = [
-    [1, 2],
-    [2, 1],
-    [-1, -2],
-    [-1, 2],
-    [1, -2],
-    [2, -1],
-    [-2, -1],
-    [-2, 1]
-  ]
+class Knight < Piece
+  include SteppingPieces
+
+  # MOVEMENTS = [
+  #   [1, 2],
+  #   [2, 1],
+  #   [-1, -2],
+  #   [-1, 2],
+  #   [1, -2],
+  #   [2, -1],
+  #   [-2, -1],
+  #   [-2, 1]
+  # ]
 
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :knight
+
+    @movements = [
+      [1, 2],
+      [2, 1],
+      [-1, -2],
+      [-1, 2],
+      [1, -2],
+      [2, -1],
+      [-2, -1],
+      [-2, 1]
+    ]
   end
 
   def to_s
@@ -160,23 +158,27 @@ class Knight < SteppingPieces
 
 end
 
-class King < SteppingPieces
-  MOVEMENTS = [
-    [0, 1],
-    [0, -1],
-    [1, 0],
-    [1, -1],
-    [1, 1],
-    [-1, 0],
-    [-1, -1],
-    [-1, 1]
-  ]
+class King < Piece
+
+
+  include SteppingPieces
 
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :king
+
+    @movements = [
+      [0, 1],
+      [0, -1],
+      [1, 0],
+      [1, -1],
+      [1, 1],
+      [-1, 0],
+      [-1, -1],
+      [-1, 1]
+    ]
   end
 
   def to_s
