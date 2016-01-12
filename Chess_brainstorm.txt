@@ -1,8 +1,0 @@
-Board class
-
-Display class
--
-
-Piece class
-- individual pieces as subclasses
-- moves in modules

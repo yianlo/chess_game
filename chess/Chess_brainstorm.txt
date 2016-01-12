@@ -1,0 +1,11 @@
+Board class
+- move only if piece.selected is true
+
+Display class
+-
+
+Piece class
+- individual pieces as subclasses
+- moves in modules
+- valid_move? method will have an array of all the valid moves
+  and check if the proposed move is included in the array
