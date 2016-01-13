@@ -16,15 +16,13 @@ class Piece
 
   def valid_move?(pos)
     pos.all?{ |i| i.between?(0, 7) } && @board[pos].color != @color
+
   end
 
-  def in_check?(color)
-    king_pos = @board.get_king_pos(color)
-    enemies_moves = @board.get_enemies_potential_moves(color)
+  def moves_that_put_me_in_check
 
-    enemies_moves.each{ |move| return true if move == king_pos }
-    false
   end
+
 
   def cross_ennemies?(pos)
     if @color == :black
@@ -41,6 +39,12 @@ class Piece
   def inspect
     [@name, @color, @pos].inspect
   end
+
+  def dup
+    self.class.new(@color, @board, @pos)
+  end
+
+
 
 
 end

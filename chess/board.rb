@@ -77,6 +77,19 @@ class Board
     grid.flatten.select{ |piece| piece.color == enemy_color }
   end
 
+  def in_check?(color)
+    king_pos = self.get_king_pos(color)
+    enemies_moves = self.get_enemies_potential_moves(color)
+
+    enemies_moves.each{ |move| return true if move == king_pos }
+    false
+  end
+
+  def lose_by_checkmate?(color)
+    enemy_color = (color == :white) ? :black : :white
+    in_check?(color) && get_enemies_potential_moves(enemy_color).empty?
+  end
+
   def [](pos)
     row, col = pos
     @grid[row][col]
@@ -87,8 +100,6 @@ class Board
     @grid[row][col] = input
   end
 
-
-
   def move(start, end_pos)
     #piece.update_pos(end_pos)
     raise "No pieces here" if self[start].name == null
@@ -96,13 +107,21 @@ class Board
     raise "You can't move here" if self[end_pos].value != null && self[start].color == self[end_pos].color
   end
 
-
-
   def in_bounds?(new_pos)
     new_pos.all?{ |i| i.between?(0, 7) }
   end
 
+  def dup
+    dupped_board = Board.new
 
+    dupped_board.grid.each_with_index do |row, i|
+      row.each_index do |j|
+        dupped_board[[i, j]] = self[[i, j]].dup
+      end
+    end
+
+    dupped_board
+  end
 
 
 
