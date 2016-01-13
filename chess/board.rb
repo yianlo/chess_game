@@ -60,15 +60,15 @@ class Board
     king.first.pos
   end
 
-  def get_enemies_potential_moves(color)
-    enemies_potential_moves = []
+  def get_enemies_valid_moves(color)
+    enemies_valid_moves = []
 
     enemies = get_enemies(color)
     enemies.each do |enemy|
-      enemies_potential_moves.concat(enemy.potential_moves)
+      enemies_valid_moves.concat(enemy.valid_moves_array)
     end
 
-    enemies_potential_moves
+    enemies_valid_moves
   end
 
   def get_enemies(color)
@@ -79,7 +79,7 @@ class Board
 
   def in_check?(color)
     king_pos = self.get_king_pos(color)
-    enemies_moves = self.get_enemies_potential_moves(color)
+    enemies_moves = self.get_enemies_valid_moves(color)
 
     enemies_moves.each{ |move| return true if move == king_pos }
     false
@@ -87,7 +87,7 @@ class Board
 
   def lose_by_checkmate?(color)
     enemy_color = (color == :white) ? :black : :white
-    in_check?(color) && get_enemies_potential_moves(enemy_color).empty?
+    in_check?(color) && get_enemies_valid_moves(enemy_color).empty?
   end
 
   def [](pos)
@@ -106,19 +106,13 @@ class Board
     # raise "You can't move here" unless valid_move? #TODO write out valid_move? method
     # raise "You can't move here" if self[end_pos].name != nil && self[start].color == self[end_pos].color
 
-
-    #piece.update_pos(end_pos)
-    if self[start].potential_moves.include?(end_pos)
-      # #check if this is a eating move
-      # if self[end_pos].color
+    if self[start].valid_moves.include?(end_pos)
       self[start].update_position(end_pos)
       self[end_pos] = self[start]
       self[start] = Piece.new(nil, self, start)
-
     end
 
-
-
+    self
   end
 
   def in_bounds?(new_pos)

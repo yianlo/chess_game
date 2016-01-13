@@ -14,15 +14,19 @@ class Piece
     "     "
   end
 
+  def valid_moves_array
+    potential_moves.reject do |move|
+      put_me_in_check?(move)
+    end
+  end
+
+  def put_me_in_check?(proposed_move)
+    @board.dup.move(@pos, proposed_move).in_check?(@color)
+  end
+
   def valid_move?(pos)
     pos.all?{ |i| i.between?(0, 7) } && @board[pos].color != @color
-
   end
-
-  def moves_that_put_me_in_check
-
-  end
-
 
   def cross_ennemies?(pos)
     if @color == :black
@@ -151,17 +155,6 @@ class Knight < Piece
     @pos = initial_pos
     @color = color
     @name = :knight
-
-    # @movements = [
-    #   [1, 2],
-    #   [2, 1],
-    #   [-1, -2],
-    #   [-1, 2],
-    #   [1, -2],
-    #   [2, -1],
-    #   [-2, -1],
-    #   [-2, 1]
-    # ]
   end
 
   def to_s
