@@ -101,10 +101,24 @@ class Board
   end
 
   def move(start, end_pos)
+
+    # raise "No pieces here" if self[start].name == nil
+    # raise "You can't move here" unless valid_move? #TODO write out valid_move? method
+    # raise "You can't move here" if self[end_pos].name != nil && self[start].color == self[end_pos].color
+
+
     #piece.update_pos(end_pos)
-    raise "No pieces here" if self[start].name == null
-    raise "You can't move here" unless valid_move? #TODO write out valid_move? method
-    raise "You can't move here" if self[end_pos].value != null && self[start].color == self[end_pos].color
+    if self[start].potential_moves.include?(end_pos)
+      # #check if this is a eating move
+      # if self[end_pos].color
+      self[start].update_position(end_pos)
+      self[end_pos] = self[start]
+      self[start] = Piece.new(nil, self, start)
+
+    end
+
+
+
   end
 
   def in_bounds?(new_pos)
