@@ -8,7 +8,8 @@ module SlidingPieces
     self.class::MOVEMENTS.each do |m|
       new_pos = @pos
       ennemies_crossed_counter = 0
-      while valid_move?(new_pos)
+      while valid_move?(new_pos) && ennemies_crossed_counter <= 1
+
         ennemies_crossed_counter += 1 if cross_ennemies?(new_pos)
         potential_moves << new_pos if ennemies_crossed_counter < 2
 

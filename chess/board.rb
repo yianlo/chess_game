@@ -65,7 +65,7 @@ class Board
 
     enemies = get_enemies(color)
     enemies.each do |enemy|
-      enemies_potential_moves << enemy.potential_moves
+      enemies_potential_moves.concat(enemy.potential_moves)
     end
 
     enemies_potential_moves

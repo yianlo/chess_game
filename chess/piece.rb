@@ -14,17 +14,11 @@ class Piece
     "     "
   end
 
-  # def avail_moves_array(pos)
-  #   pot_moves = potential_moves(pos)
-  #   pot_moves.select{ |move| within_bounds?(move) && uncross_piece?(move) }
-  # end
   def valid_move?(pos)
-    #within bounds && does not cross an ally/ piece of same color
     pos.all?{ |i| i.between?(0, 7) } && @board[pos].color != @color
   end
 
-  def in_check?(pos, color)
-    # if black king current pos is included in a white piece potential moves => true
+  def in_check?(color)
     king_pos = @board.get_king_pos(color)
     enemies_moves = @board.get_enemies_potential_moves(color)
 
