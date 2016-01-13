@@ -1,5 +1,7 @@
+require_relative 'move_modules'
+
 class Piece
-  attr_reader :name, :color, :board
+  attr_reader :name, :color, :board, :pos
 
   def initialize(color = nil, board, initial_pos)
     @name = nil
@@ -19,6 +21,15 @@ class Piece
   def valid_move?(pos)
     #within bounds && does not cross an ally/ piece of same color
     pos.all?{ |i| i.between?(0, 7) } && @board[pos].color != @color
+  end
+
+  def in_check?(pos, color)
+    # if black king current pos is included in a white piece potential moves => true
+    king_pos = @board.get_king_pos(color)
+    enemies_moves = @board.get_enemies_potential_moves(color)
+
+    enemies_moves.each{ |move| return true if move == king_pos }
+    false
   end
 
   def cross_ennemies?(pos)
@@ -43,21 +54,23 @@ end
 class Queen < Piece
   include SlidingPieces
 
+  MOVEMENTS = [
+    [-1, -1],
+    [-1, 1],
+    [1, -1],
+    [1, 1],
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1]
+    ]
+
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :queen
-    @movements = [
-      [-1, -1],
-      [-1, 1],
-      [1, -1],
-      [1, 1],
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1]
-      ]
+
   end
 
   def to_s
@@ -72,16 +85,18 @@ end
 class Bishop < Piece
   include SlidingPieces
 
+  MOVEMENTS = [
+    [-1, -1],
+    [-1, 1],
+    [1, -1],
+    [1, 1]]
+
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :bishop
-    @movements = [
-      [-1, -1],
-      [-1, 1],
-      [1, -1],
-      [1, 1]]
+
   end
 
   def to_s
@@ -95,17 +110,19 @@ end
 class Rook < Piece
   include SlidingPieces
 
+  MOVEMENTS = [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1]
+  ]
+
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :rook
-    @movements = [
-      [-1, 0],
-      [1, 0],
-      [0, -1],
-      [0, 1]
-    ]
+
   end
 
   def to_s
@@ -120,16 +137,16 @@ end
 class Knight < Piece
   include SteppingPieces
 
-  # MOVEMENTS = [
-  #   [1, 2],
-  #   [2, 1],
-  #   [-1, -2],
-  #   [-1, 2],
-  #   [1, -2],
-  #   [2, -1],
-  #   [-2, -1],
-  #   [-2, 1]
-  # ]
+  MOVEMENTS = [
+    [1, 2],
+    [2, 1],
+    [-1, -2],
+    [-1, 2],
+    [1, -2],
+    [2, -1],
+    [-2, -1],
+    [-2, 1]
+  ]
 
   def initialize(color = nil, board, initial_pos)
     @board = board
@@ -137,16 +154,16 @@ class Knight < Piece
     @color = color
     @name = :knight
 
-    @movements = [
-      [1, 2],
-      [2, 1],
-      [-1, -2],
-      [-1, 2],
-      [1, -2],
-      [2, -1],
-      [-2, -1],
-      [-2, 1]
-    ]
+    # @movements = [
+    #   [1, 2],
+    #   [2, 1],
+    #   [-1, -2],
+    #   [-1, 2],
+    #   [1, -2],
+    #   [2, -1],
+    #   [-2, -1],
+    #   [-2, 1]
+    # ]
   end
 
   def to_s
@@ -163,22 +180,22 @@ class King < Piece
 
   include SteppingPieces
 
+  MOVEMENTS = [
+    [0, 1],
+    [0, -1],
+    [1, 0],
+    [1, -1],
+    [1, 1],
+    [-1, 0],
+    [-1, -1],
+    [-1, 1]
+  ]
+
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
     @color = color
     @name = :king
-
-    @movements = [
-      [0, 1],
-      [0, -1],
-      [1, 0],
-      [1, -1],
-      [1, 1],
-      [-1, 0],
-      [-1, -1],
-      [-1, 1]
-    ]
   end
 
   def to_s
@@ -194,6 +211,18 @@ class Pawn < Piece
   ## first move of each pawn can be row +2
   ## when eating another piece pawn can move row +1 && col +1
   ## regular move
+
+  MOVEMENTS = [
+    [1, 0],
+    [-1, 0],
+    [-2, 0], # only for first move
+    [2, 0], # only for first move
+    [1, 1], # pawn eating move
+    [1, -1], # pawn eating move
+    [-1, 1], # pawn eating move
+    [-1,-1] # pawn eating move
+  ]
+
   def initialize(color = nil, board, initial_pos)
     @board = board
     @pos = initial_pos
@@ -201,16 +230,6 @@ class Pawn < Piece
     @name = :pawn
 
     @initial_pos = initial_pos
-    @movement = [
-      [1, 0],
-      [-1, 0],
-      [-2, 0], # only for first move
-      [2, 0], # only for first move
-      [1, 1], # pawn eating move
-      [1, -1], # pawn eating move
-      [-1, 1], # pawn eating move
-      [-1,-1] # pawn eating move
-    ]
   end
 
   def to_s
@@ -220,17 +239,17 @@ class Pawn < Piece
     end
   end
 
-  def potential_moves(pos)
+  def potential_moves
     potential_moves = []
 
-    if pos == @initial_pos
-      @movement.first(4).each do |m|
-        new_pos = [pos[0] + m[0], pos[1] + m[1]]
+    if @pos == @initial_pos
+      MOVEMENTS.first(4).each do |m|
+        new_pos = [@pos[0] + m[0], @pos[1] + m[1]]
         potential_moves << new_pos if valid_move?(new_pos)
       end
     else
-      @movement.first(2).each do |m|
-        new_pos = [pos[0] + m[0], pos[1] + m[1]]
+      MOVEMENTS.first(2).each do |m|
+        new_pos = [@pos[0] + m[0], @pos[1] + m[1]]
         potential_moves << new_pos if valid_move?(new_pos)
       end
     end

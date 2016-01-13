@@ -1,4 +1,7 @@
-require_relative 'manifesto'
+require_relative 'board'
+require_relative 'cursor'
+require 'colorize'
+# require "io/console"
 
 class Display
 

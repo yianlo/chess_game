@@ -1,3 +1,5 @@
+require_relative 'piece'
+
 class Board
   WHITE_POSITIONS = {
     pawns: [[6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]],
@@ -53,24 +55,27 @@ class Board
 
   end
 
+  def get_king_pos(color)
+    king = grid.flatten.select { |el| el.is_a?(King) && el.color == color }
+    king.first.pos
+  end
 
+  def get_enemies_potential_moves(color)
+    enemies_potential_moves = []
 
-#white pieces coordonates (down)
-# pawns: [6, 0], [6, 1], [6, 2], [6, 3], [6, 4], [6, 5], [6, 6], [6, 7]
-# rook: [7, 0], [7, 7]
-# knight: [7, 1], [7, 6]
-# bishop: [7, 2], [7, 5]
-# queen: [7, 3]
-# king: [7, 4]
+    enemies = get_enemies(color)
+    enemies.each do |enemy|
+      enemies_potential_moves << enemy.potential_moves
+    end
 
-#black pieces coordonates (top)
-# pawns: [1, 0], [1, 1], [1, 2], [1, 3], [1, 4], [1, 5], [1, 6], [1, 7]
-# rook: [0, 0], [0, 7]
-# knight: [0, 1], [0, 6]
-# bishop: [0, 2], [0, 5]
-# queen: [0, 3]
-# king: [0, 4]
+    enemies_potential_moves
+  end
 
+  def get_enemies(color)
+    enemy_color = (color == :white) ? :black : :white
+
+    grid.flatten.select{ |piece| piece.color == enemy_color }
+  end
 
   def [](pos)
     row, col = pos
@@ -96,6 +101,8 @@ class Board
   def in_bounds?(new_pos)
     new_pos.all?{ |i| i.between?(0, 7) }
   end
+
+
 
 
 

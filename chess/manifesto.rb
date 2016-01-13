@@ -1,8 +1,6 @@
-require_relative 'move_modules'
-require_relative 'piece'
-require 'colorize'
-require_relative 'board'
 require 'byebug'
-require_relative 'cursor'
-require "io/console"
-# require 'byebug'
+load './move_modules.rb'
+load './piece.rb'
+load './board.rb'
+load './cursor.rb'
+load './display.rb'
